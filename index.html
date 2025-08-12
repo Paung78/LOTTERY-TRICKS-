@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottery Tricks And AI Prediction</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Premium Variables */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+      --success-gradient: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+      --danger-gradient: linear-gradient(135deg, #ff2d75 0%, #ff6b6b 100%);
+      --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+      
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --dark-glass: rgba(0, 0, 0, 0.3);
+      
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --text-gold: #ffd700;
+      
+      --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 12px 40px rgba(0, 0, 0, 0.2);
+      --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.3);
+      
+      --border-radius: 16px;
+      --border-radius-small: 8px;
+      --border-radius-large: 24px;
+      
+      --animation-fast: 0.2s;
+      --animation-medium: 0.3s;
+      --animation-slow: 0.5s;
+      
+      --big-color: #00ff88;
+      --small-color: #ff2d75;
+    }
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark-gradient);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background Animation */
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      animation: float 6s ease-in-out infinite;
+      backdrop-filter: blur(10px);
+    }
+
+    .orb-1 {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 150px;
+      height: 150px;
+      top: 60%;
+      right: 10%;
+      animation-delay: 2s;
+    }
+
+    .orb-3 {
+      width: 100px;
+      height: 100px;
+      bottom: 20%;
+      left: 60%;
+      animation-delay: 4s;
+    }
+
+    .orb-4 {
+      width: 80px;
+      height: 80px;
+      top: 30%;
+      right: 40%;
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.6;
+      }
+    }
+
+    /* Container */
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Page Management */
+    .page {
+      display: none;
+      animation: fadeIn var(--animation-medium) ease-in-out;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .premium-icon {
+      font-size: 48px;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+      animation: iconPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .main-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Input Styles */
+    .input-container {
+      margin-bottom: 30px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 18px;
+      z-index: 2;
+    }
+
+    .premium-input {
+      width: 100%;
+      padding: 18px 20px 18px 55px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 500;
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      border: 2px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      transition: all var(--animation-medium) ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .premium-input:focus {
+      outline: none;
+      border-color: rgba(102, 126, 234, 0.5);
+      box-shadow: var(--shadow-glow), var(--shadow-medium);
+      transform: translateY(-2px);
+    }
+
+    .premium-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Button Styles */
+    .btn-premium, .btn-connect, .btn-server, .btn-channel {
+      width: 100%;
+      padding: 18px 24px;
+      margin: 12px 0;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--animation-medium) ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Premium Button */
+    .btn-premium {
+      background: var(--primary-gradient);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-premium:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-strong), var(--shadow-glow);
+    }
+
+    /* Connect Button with Pulse */
+    .btn-connect {
+      background: var(--gold-gradient);
+      color: #000;
+      font-weight: 700;
+      animation: connectPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes connectPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: var(--shadow-medium);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-strong), 0 0 40px rgba(255, 215, 0, 0.4);
+      }
+    }
+
+    .btn-connect:hover {
+      animation: none;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    /* Server Buttons */
+    .btn-server {
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      border: 2px solid var(--glass-border);
+      flex-direction: column;
+      gap: 8px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .server-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .server-header i {
+      font-size: 24px;
+      color: var(--text-gold);
+    }
+
+    .server-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success-gradient);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+
+    .server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .server-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    .btn-server:hover {
+      background: rgba(102, 126, 234, 0.1);
+      border-color: rgba(102, 126, 234, 0.3);
+      transform: translateY(-3px);
+    }
+
+    /* Channel Buttons */
+    .btn-channel {
+      background: var(--glass-bg);
+      color: var(--text-primary);
+      border: 2px solid var(--glass-border);
+      padding: 16px 20px;
+      margin: 8px 0;
+    }
+
+    .btn-channel i {
+      font-size: 18px;
+      color: var(--text-gold);
+    }
+
+    .btn-channel.btn-key {
+      background: var(--secondary-gradient);
+      border-color: transparent;
+    }
+
+    .btn-channel:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Channels Grid */
+    .channels-section {
+      margin-top: 40px;
+    }
+
+    .channels-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Servers Grid */
+    .servers-grid {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    /* Button Glow Effect */
+    .btn-glow {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-premium:hover .btn-glow,
+    .btn-connect:hover .btn-glow {
+      left: 100%;
+    }
+
+    /* Timer Display */
+    .timer-display {
+      text-align: center;
+      margin: 30px 0;
+      padding: 16px;
+      background: var(--dark-glass);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      font-size: 18px;
+      font-weight: 600;
+      color: #0f0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* Success Indicator */
+    .success-indicator {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: var(--dark-glass);
+      border-radius: var(--border-radius);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .success-indicator i {
+      font-size: 48px;
+      color: #00ff88;
+      margin-bottom: 16px;
+      display: block;
+      animation: successPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes successPulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+      }
+      50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.6));
+      }
+    }
+
+    .success-indicator p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    /* Server Page Styles */
+    .server-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 100;
+    }
+
+    .iframe-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Premium Prediction Box */
+    .prediction-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      width: 340px;
+      background: var(--dark-glass);
+      border-radius: var(--border-radius);
+      backdrop-filter: blur(20px);
+      border: 2px solid var(--glass-border);
+      box-shadow: var(--shadow-strong);
+      transition: all var(--animation-medium) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .prediction-box {
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prediction-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gold-gradient);
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .prediction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .prediction-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prediction-title i {
+      color: var(--text-gold);
+      font-size: 18px;
+    }
+
+    .prediction-badge {
+      background: var(--gold-gradient);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .prediction-details {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .prediction-result {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 20px 0;
+      padding: 24px;
+      border-radius: var(--border-radius-small);
+      letter-spacing: 2px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      transition: all var(--animation-medium) ease;
+    }
+
+    .prediction-result::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, 
+                      transparent 25%, 
+                      rgba(255, 255, 255, 0.05) 50%, 
+                      transparent 75%);
+      background-size: 200% 200%;
+      animation: shine 3s infinite linear;
+    }
+
+    @keyframes shine {
+      0% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    .prediction-result.BIG {
+      color: var(--big-color);
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+      border-color: rgba(0, 255, 136, 0.2);
+    }
+
+    .prediction-result.SMALL {
+      color: var(--small-color);
+      text-shadow: 0 0 20px rgba(255, 45, 117, 0.5);
+      border-color: rgba(255, 45, 117, 0.2);
+    }
+
+    .prediction-loader {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+
+    .loader-circle {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top: 2px solid var(--text-gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-top: 16px;
+    }
+
+    .refresh-time {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .credit {
+      color: var(--text-gold);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    /* Control Buttons */
+    .toggle-btn, .back-btn {
+      position: fixed;
+      bottom: 20px;
+      z-index: 1000;
+      background: var(--dark-glass);
+      color: var(--text-primary);
+      border: 2px solid var(--glass-border);
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-medium);
+      transition: all var(--animation-medium) ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .toggle-btn {
+      left: 20px;
+      background: var(--gold-gradient);
+      color: #000;
+      border-color: transparent;
+    }
+
+    .back-btn {
+      left: 160px;
+      background: var(--danger-gradient);
+      border-color: transparent;
+    }
+
+    .toggle-btn:hover, .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .toggle-btn i, .back-btn i {
+      font-size: 14px;
+    }
+
+    /* Credits */
+    .credits {
+      text-align: center;
+      margin-top: 40px;
+      padding: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--dark-glass);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+      
+      .prediction-container {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+      }
+      
+      .main-title {
+        font-size: 24px;
+      }
+      
+      .premium-input,
+      .btn-premium,
+      .btn-connect,
+      .btn-server,
+      .btn-channel {
+        padding: 16px 20px;
+        font-size: 15px;
+      }
+      
+      .back-btn {
+        left: 140px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .prediction-container {
+        width: calc(100% - 20px);
+        left: 10px;
+        right: 10px;
+        top: 10px;
+      }
+      
+      .prediction-result {
+        font-size: 24px;
+        padding: 16px;
+      }
+      
+      .toggle-btn {
+        left: 10px;
+        padding: 10px 16px;
+        font-size: 11px;
+      }
+      
+      .back-btn {
+        left: 120px;
+        padding: 10px 16px;
+        font-size: 11px;
+      }
+    }
+
+    /* Additional Premium Effects */
+    .premium-input:focus + .input-icon {
+      color: var(--text-gold);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .btn-activate {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-activate::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.5s ease;
+    }
+
+    .btn-activate:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Collapsible Prediction Box */
+    .prediction-container.collapsed {
+      transform: scale(0.8) translateY(-20px);
+      opacity: 0.7;
+    }
+
+    .toggle-btn::after {
+      content: '▼';
+      font-size: 10px;
+      transition: transform var(--animation-medium) ease;
+      margin-left: 4px;
+    }
+
+    .toggle-btn.collapsed::after {
+      transform: rotate(-90deg);
+    }
+
+    /* Loading States */
+    .loading {
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: loading-shimmer 1.5s infinite;
+    }
+
+    @keyframes loading-shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-animation">
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    <div class="floating-orb orb-4"></div>
+  </div>
+
+  <div class="container">
+    <!-- Page 1: Key Activation -->
+    <div id="page1" class="page active">
+      <div class="page-header">
+        <div class="logo-container">
+          <i class="fas fa-dice premium-icon"></i>
+          <h2 class="main-title">Lottery Tricks & AI Prediction</h2>
+        </div>
+        <p class="subtitle">Enter your premium key to unlock lottery predictions</p>
+      </div>
+      
+      <div class="input-container">
+        <div class="input-wrapper">
+          <i class="fas fa-key input-icon"></i>
+          <input type="text" id="keyInput" placeholder="ENTER KEY (FORMAT: KEY-XXXXXX)" class="premium-input">
+        </div>
+        <button class="btn-premium btn-activate" onclick="activateKey()">
+          <span class="btn-text">ACTIVATE PREMIUM ACCESS</span>
+          <span class="btn-glow"></span>
+        </button>
+      </div>
+
+      <div id="timer" class="timer-display"></div>
+      
+      <div class="channels-section">
+        <h3 class="section-title">
+          <i class="fas fa-crown"></i>
+          JOIN CHANNELS
+        </h3>
+        <div class="channels-grid">
+          <button class="btn-channel" onclick="window.location.href='https://t.me/PGMONEY67800'">
+            <i class="fab fa-telegram-plane"></i>
+            <span>VIP PREDICTION CHANNEL 1</span>
+          </button>
+          <button class="btn-channel" onclick="window.location.href='https://t.me/pgmoney2_67800'">
+            <i class="fab fa-telegram-plane"></i>
+            <span>VIP PREDICTION CHANNEL 2</span>
+          </button>
+          <button class="btn-channel btn-key" onclick="window.location.href='https://t.me/Paunggyi111'">
+            <i class="fas fa-key"></i>
+            <span>GET PREMIUM KEY</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 2: After Activation -->
+    <div id="page2" class="page">
+      <div class="page-header">
+        <div class="logo-container">
+          <i class="fas fa-server premium-icon"></i>
+          <h2 class="main-title">Connection Server</h2>
+        </div>
+      </div>
+      
+      <div id="content" class="content-section">
+        <div class="success-indicator">
+          <i class="fas fa-check-circle"></i>
+          <p>Your premium prediction system is ready</p>
+        </div>
+        <button class="btn-connect btn-pulse" onclick="showPage('page3')">
+          <span class="btn-text">CONNECT TO PREDICTION SERVER</span>
+          <span class="btn-glow"></span>
+        </button>
+      </div>
+      <div id="timer" class="timer-display"></div>
+    </div>
+
+    <!-- Page 3: Prediction Servers -->
+    <div id="page3" class="page">
+      <div class="page-header">
+        <div class="logo-container">
+          <i class="fas fa-brain premium-icon"></i>
+          <h2 class="main-title">AI PREDICTION SERVERS</h2>
+        </div>
+        <p class="subtitle">Select a premium prediction server</p>
+      </div>
+      
+      <div class="servers-grid">
+        <button class="btn-server server-1" onclick="showServerPage('server1')">
+          <div class="server-header">
+            <i class="fas fa-microchip"></i>
+            <span class="server-status online"></span>
+          </div>
+          <span class="server-name">CK AI PREDICTION SERVER 1</span>
+          <span class="server-desc">Advanced Neural Network</span>
+        </button>
+        <button class="btn-server server-2" onclick="showServerPage('server2')">
+          <div class="server-header">
+            <i class="fas fa-robot"></i>
+            <span class="server-status online"></span>
+          </div>
+          <span class="server-name">CK AI PREDICTION SERVER 2</span>
+          <span class="server-desc">Machine Learning Engine</span>
+        </button>
+      </div>
+      <div id="timer" class="timer-display"></div>
+    </div>
+
+    <!-- Server 1 Page -->
+    <div id="server1" class="page server-page">
+      <div class="iframe-container">
+        <iframe src="https://www.cklottery.online/#/register?invitationCode=81487219676" allowfullscreen></iframe>
+      </div>
+
+      <!-- Premium Prediction Box -->
+      <div class="prediction-container" id="prediction-box1">
+        <div class="prediction-box">
+          <div class="prediction-header">
+            <div class="prediction-title">
+              <i class="fas fa-brain"></i>
+              AI PREDICTION SERVER 1
+            </div>
+            <div class="prediction-badge">V2.2</div>
+          </div>
+          
+          <div class="prediction-details">
+            <div class="prediction-period">Period: <span id="period-number1">Loading...</span></div>
+            <div class="prediction-index">Index: <span id="pattern-index1">-</span></div>
+          </div>
+          
+          <div class="prediction-result" id="prediction1">
+            <span id="result-text1">Predicting...</span>
+            <div class="prediction-loader">
+              <div class="loader-circle"></div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <div class="refresh-time" id="refresh-time1">
+              <i class="fas fa-clock"></i>
+              <span>Next update: 5s</span>
+            </div>
+            <div class="credit">CRD BY PYAUNG</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Premium Toggle Button -->
+      <button class="toggle-btn" id="toggle-btn1">
+        <i class="fas fa-chart-line"></i>
+        PREDICTION
+      </button>
+      <button class="back-btn" onclick="showPage('page3')">
+        <i class="fas fa-arrow-left"></i>
+        BACK
+      </button>
+    </div>
+
+    <!-- Server 2 Page -->
+    <div id="server2" class="page server-page">
+      <div class="iframe-container">
+        <iframe src="https://www.cklottery.online/#/register?invitationCode=81487219676" allowfullscreen></iframe>
+      </div>
+
+      <!-- Premium Prediction Box -->
+      <div class="prediction-container" id="prediction-box2">
+        <div class="prediction-box">
+          <div class="prediction-header">
+            <div class="prediction-title">
+              <i class="fas fa-robot"></i>
+              AI PREDICTION SERVER 2
+            </div>
+            <div class="prediction-badge">V2.2</div>
+          </div>
+          
+          <div class="prediction-details">
+            <div class="prediction-period">Period: <span id="period-number2">Loading...</span></div>
+            <div class="prediction-index">Index: <span id="pattern-index2">-</span></div>
+          </div>
+          
+          <div class="prediction-result" id="prediction2">
+            <span id="result-text2">Predicting...</span>
+            <div class="prediction-loader">
+              <div class="loader-circle"></div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <div class="refresh-time" id="refresh-time2">
+              <i class="fas fa-clock"></i>
+              <span>Next update: 5s</span>
+            </div>
+            <div class="credit">CRD BY PYAUNG</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Premium Toggle Button -->
+      <button class="toggle-btn" id="toggle-btn2">
+        <i class="fas fa-chart-line"></i>
+        PREDICTION
+      </button>
+      <button class="back-btn" onclick="showPage('page3')">
+        <i class="fas fa-arrow-left"></i>
+        BACK
+      </button>
+    </div>
+
+    <div class="credits">
+      <i class="fas fa-code"></i>
+      CRD BY PYAUNGGYI
+    </div>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAy3QvFmhKiOX38MZiINfZq2yYXGhb7uL8",
+      authDomain: "ck-adm.firebaseapp.com",
+      databaseURL: "https://ck-adm-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "ck-adm",
+      storageBucket: "ck-adm.appspot.com",
+      messagingSenderId: "192822942347",
+      appId: "1:192822942347:web:f27eee393e16c84544528e"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let expireTime = parseInt(localStorage.getItem('expireTime')) || 0;
+    let timerInterval;
+
+    // Show specific page
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    // Show server page
+    function showServerPage(serverId) {
+      showPage(serverId);
+      if (serverId === 'server1') {
+        initializeServer1();
+      } else {
+        initializeServer2();
+      }
+    }
+
+    // Activate key function
+    function activateKey() {
+      const key = document.getElementById('keyInput').value.trim().toUpperCase();
+      if (!key) { 
+        alert("Please enter a premium access key"); 
+        return; 
+      }
+      
+      const btn = document.querySelector('.btn-premium');
+      btn.innerHTML = 'VERIFYING...';
+      
+      db.ref('keys/' + key).once('value').then(snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (data.used) { 
+            alert("This key has already been used!"); 
+            btn.innerHTML = 'ACTIVATE PREMIUM ACCESS';
+            return; 
+          }
+          
+          const extraTime = data.duration * 60 * 1000;
+          expireTime = Date.now() + extraTime;
+          localStorage.setItem('expireTime', expireTime);
+          db.ref('keys/' + key).update({ used: true });
+          
+          alert(`Premium Access Activated for ${data.duration} minutes`);
+          showPage('page2');
+          startTimer();
+        } else { 
+          alert("Invalid Premium Key"); 
+          btn.innerHTML = 'ACTIVATE PREMIUM ACCESS';
+        }
+      }).catch(error => {
+        alert("Error verifying key: " + error.message);
+        btn.innerHTML = 'ACTIVATE PREMIUM ACCESS';
+      });
+    }
+
+    // Start timer function
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      timerInterval = setInterval(() => {
+        const now = Date.now();
+        if (expireTime > now) {
+          const remain = Math.floor((expireTime - now) / 1000);
+          const m = Math.floor(remain / 60);
+          const s = remain % 60;
+          document.querySelectorAll('#timer').forEach(timer => {
+            timer.innerHTML = `⏳ PREMIUM TIME LEFT: ${m}m ${s}s`;
+          });
+        } else {
+          document.querySelectorAll('#timer').forEach(timer => {
+            timer.innerHTML = `❌ SESSION EXPIRED`;
+          });
+          showPage('page1');
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    }
+
+    // Server 1 functions
+    function initializeServer1() {
+      const pad = (n, w = 2) => String(n).padStart(w, '0');
+      
+      const getMMTime = () => {
+        const now = new Date();
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utc + 6.5 * 60 * 60 * 1000);
+      };
+      
+      const REFERENCE_TIME_MM = "2025-06-19T16:38:30+06:30";
+      const REFERENCE_SUFFIX = 51217;
+      
+      const baseIndexCalc = () => {
+        const refDate = new Date(REFERENCE_TIME_MM);
+        const start = new Date(refDate);
+        start.setHours(0, 0, 0, 0);
+        const refSecs = Math.floor((refDate - start) / 1000);
+        return REFERENCE_SUFFIX - Math.floor(refSecs / 30);
+      };
+      
+      const BASE_INDEX = baseIndexCalc() + 1;
+      
+      function generateCurrentPeriod() {
+        const now = getMMTime();
+        const y = now.getFullYear();
+        const m = pad(now.getMonth() + 1);
+        const d = pad(now.getDate());
+        
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const secsSinceMidnight = Math.floor((now - startOfDay) / 1000);
+        const pIndex = Math.floor(secsSinceMidnight / 30);
+        const suffix = pad(BASE_INDEX + pIndex, 5);
+        
+        return {
+          periodNumber: `${y}${m}${d}1000${suffix}`,
+          patternIndex: BASE_INDEX + pIndex
+        };
+      }
+      
+      const patternString = ["BIG","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","BIG","BIG","SMALL","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","SMALL","BIG","SMALL","SMALL","BIG","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","BIG","SMALL","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","BIG","BIG"];
+
+      function updatePrediction() {
+        const { periodNumber, patternIndex } = generateCurrentPeriod();
+        const relativeIndex = patternIndex % patternString.length;
+        const result = patternString[relativeIndex];
+        
+        document.getElementById("period-number1").textContent = periodNumber;
+        document.getElementById("pattern-index1").textContent = patternIndex;
+        document.getElementById("result-text1").textContent = result;
+        document.getElementById("prediction1").className = `prediction-result ${result}`;
+        
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const nextUpdate = 30 - (seconds % 30);
+        document.getElementById("refresh-time1").textContent = `Next update: ${nextUpdate}s`;
+      }
+      
+      updatePrediction();
+      setInterval(updatePrediction, 1000);
+
+      // Toggle Functionality
+      const toggleBtn1 = document.getElementById('toggle-btn1');
+      const predictionBox1 = document.getElementById('prediction-box1');
+      
+      let isVisible1 = true;
+      
+      toggleBtn1.addEventListener('click', () => {
+        isVisible1 = !isVisible1;
+        
+        if (isVisible1) {
+          predictionBox1.style.transform = 'scale(1)';
+          predictionBox1.style.opacity = '1';
+          toggleBtn1.classList.remove('collapsed');
+        } else {
+          predictionBox1.style.transform = 'scale(0)';
+          predictionBox1.style.opacity = '0';
+          toggleBtn1.classList.add('collapsed');
+        }
+      });
+    }
+
+    // Server 2 functions
+    function initializeServer2() {
+      const pad = (n, w = 2) => String(n).padStart(w, '0');
+      
+      const getMMTime = () => {
+        const now = new Date();
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utc + 6.5 * 60 * 60 * 1000);
+      };
+      
+      const REFERENCE_TIME_MM = "2025-06-19T16:38:30+06:30";
+      const REFERENCE_SUFFIX = 51217;
+      
+      const baseIndexCalc = () => {
+        const refDate = new Date(REFERENCE_TIME_MM);
+        const start = new Date(refDate);
+        start.setHours(0, 0, 0, 0);
+        const refSecs = Math.floor((refDate - start) / 1000);
+        return REFERENCE_SUFFIX - Math.floor(refSecs / 30);
+      };
+      
+      const BASE_INDEX = baseIndexCalc() + 1;
+      
+      function generateCurrentPeriod() {
+        const now = getMMTime();
+        const y = now.getFullYear();
+        const m = pad(now.getMonth() + 1);
+        const d = pad(now.getDate());
+        
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+        const secsSinceMidnight = Math.floor((now - startOfDay) / 1000);
+        const pIndex = Math.floor(secsSinceMidnight / 30);
+        const suffix = pad(BASE_INDEX + pIndex, 5);
+        
+        return {
+          periodNumber: `${y}${m}${d}1000${suffix}`,
+          patternIndex: BASE_INDEX + pIndex
+        };
+      }
+      
+      const patternString = ["SMALL","SMALL","BIG","SMALL","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","SMALL","SMALL","BIG","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","SMALL","BIG","BIG","BIG","SMALL","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","BIG","SMALL","SMALL","SMALL","BIG","SMALL","SMALL","BIG","BIG","BIG","SMALL","BIG","SMALL","SMALL","BIG","BIG","SMALL","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","BIG","SMALL","SMALL","BIG","SMALL","BIG","SMALL","BIG","BIG"];
+
+      function updatePrediction() {
+        const { periodNumber, patternIndex } = generateCurrentPeriod();
+        const relativeIndex = patternIndex % patternString.length;
+        const result = patternString[relativeIndex];
+        
+        document.getElementById("period-number2").textContent = periodNumber;
+        document.getElementById("pattern-index2").textContent = patternIndex;
+        document.getElementById("result-text2").textContent = result;
+        document.getElementById("prediction2").className = `prediction-result ${result}`;
+        
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const nextUpdate = 30 - (seconds % 30);
+        document.getElementById("refresh-time2").textContent = `Next update: ${nextUpdate}s`;
+      }
+      
+      updatePrediction();
+      setInterval(updatePrediction, 1000);
+
+      // Toggle Functionality
+      const toggleBtn2 = document.getElementById('toggle-btn2');
+      const predictionBox2 = document.getElementById('prediction-box2');
+      
+      let isVisible2 = true;
+      
+      toggleBtn2.addEventListener('click', () => {
+        isVisible2 = !isVisible2;
+        
+        if (isVisible2) {
+          predictionBox2.style.transform = 'scale(1)';
+          predictionBox2.style.opacity = '1';
+          toggleBtn2.classList.remove('collapsed');
+        } else {
+          predictionBox2.style.transform = 'scale(0)';
+          predictionBox2.style.opacity = '0';
+          toggleBtn2.classList.add('collapsed');
+        }
+      });
+    }
+
+    // Check if session is active on page load
+    if (expireTime && Date.now() < expireTime) {
+      showPage('page2');
+      startTimer();
+    }
+
+    // Add premium loading effects
+    document.addEventListener('DOMContentLoaded', function() {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.addEventListener('click', function() {
+          this.classList.add('loading');
+          setTimeout(() => {
+            this.classList.remove('loading');
+          }, 500);
+        });
+      });
+    });
+
+    // Enhanced error handling
+    window.addEventListener('error', function(event) {
+      console.error('Application error:', event.error);
+    });
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const activePage = document.querySelector('.page.active');
+        if (activePage && activePage.id !== 'page1') {
+          if (activePage.id === 'server1' || activePage.id === 'server2') {
+            showPage('page3');
+          } else {
+            showPage('page1');
+          }
+        }
+      }
+    });
+
+    // Add touch gestures for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    document.addEventListener('touchstart', function(event) {
+      touchStartY = event.changedTouches[0].screenY;
+    });
+
+    document.addEventListener('touchend', function(event) {
+      touchEndY = event.changedTouches[0].screenY;
+      handleGesture();
+    });
+
+    function handleGesture() {
+      const swipeThreshold = 50;
+      const diff = touchStartY - touchEndY;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        console.log('Swipe detected:', diff > 0 ? 'up' : 'down');
+      }
+    }
+  </script>
+</body>
+</html>
